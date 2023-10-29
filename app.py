@@ -1,3 +1,8 @@
+from flask import Flask, request, jsonify
+from flask import render_template
+
+app = Flask(__name__)
+
 def number_to_words(number):
     # Define lists for words representing numbers
     ones = ["", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
@@ -28,13 +33,21 @@ def number_to_words(number):
 
     return words.strip()
 
-# Input a number and convert it to words
-try:
-    number = int(input("Enter a number (0 to 999,999,999): "))
-    if 0 <= number <= 999999999:
+@app.route('/')
+def home():
+    return render_template('index.html')
+
+def convert_number():
+    try:
+        data = request.get_json()
+        if 'number' not in data:
+            raise ValueError("Missing 'number' field in JSON input")
+        
+        number = int(data['number'])
         words = number_to_words(number)
-        print(f"{number} in words: {words}")
-    else:
-        print("Number out of range.")
-except ValueError:
-    print("Invalid input. Please enter a valid number.")
+        return jsonify({"success": True, "words": words})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})
+
+if __name__ == '__main__':
+    app.run(debug=True)
