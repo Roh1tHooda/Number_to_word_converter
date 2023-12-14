@@ -30,7 +30,7 @@ def number_to_words(number):
         if number % 1000 != 0:
             words = recursive_convert(number % 1000) + " " + thousands[i] + " " + words
         number //= 1000
-adaaad
+
     return words.strip()
 
 @app.route('/')
